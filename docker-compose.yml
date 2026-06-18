@@ -1,0 +1,63 @@
+# Smart Queue — local deployment (Docker Desktop)
+#   db        Postgres 17           (host port 5433 → avoids host's own Postgres on 5432)
+#   backend   Laravel 13 API        http://localhost:8000
+#   dashboard Vue staff dashboard   http://localhost:8080  (proxies /api → backend)
+#
+# Usage:  docker compose up --build -d
+#         docker compose logs -f backend
+#         docker compose down         (add -v to also wipe the DB volume)
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: smart_queue
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d smart_queue"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  backend:
+    build: ./backend
+    environment:
+      APP_NAME: "Smart Queue"
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_KEY: "base64:Z8NoWKU+Y7nCv3JQnIlL6xZd1Q+euiHbnkn+DrhldVk="
+      APP_URL: "http://localhost:8000"
+      JWT_SECRET: "rHoq2KItP3SUAamLoSZGbylrrnnlCxwzFUhfXyxYUxqdi65Fe8ptPKJLQZFz2quN"
+      JWT_ALGO: HS256
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_DATABASE: smart_queue
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      # Keep the demo single-process: log broadcasts, run jobs synchronously, file cache/session.
+      BROADCAST_CONNECTION: log
+      QUEUE_CONNECTION: sync
+      CACHE_STORE: database
+      SESSION_DRIVER: database
+      LOG_CHANNEL: stderr
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "8090:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

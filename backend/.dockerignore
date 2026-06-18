@@ -1,0 +1,11 @@
+vendor
+node_modules
+.git
+.env.backup
+storage/logs/*.log
+storage/app/private/ml/*.json
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+tests/coverage
+.phpunit.result.cache

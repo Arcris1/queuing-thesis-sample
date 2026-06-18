@@ -54,10 +54,10 @@ export const useQueueBoardStore = defineStore('queueBoard', () => {
     let away = 0
     let offline = 0
     for (const group of queueGroups.value) {
-      waiting += group.waiting_count
-      active += group.presence_counts.active
-      away += group.presence_counts.away
-      offline += group.presence_counts.offline
+      waiting += group.waiting_count ?? group.counts?.waiting ?? 0
+      active += group.counts?.active ?? 0
+      away += group.counts?.away ?? 0
+      offline += group.counts?.offline ?? 0
     }
     return { waiting, active, away, offline }
   })

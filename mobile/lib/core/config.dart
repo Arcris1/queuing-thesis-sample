@@ -7,20 +7,20 @@ class AppConfig {
 
   /// Base URL for the Laravel API (includes the `/api` prefix).
   ///
-  /// Defaults to the Android emulator loopback alias. The host machine's
-  /// `127.0.0.1` is reachable from the Android emulator only via `10.0.2.2`.
+  /// Defaults to this machine's LAN IP, which is reachable from the Android
+  /// emulator, the iOS simulator, and physical devices on the same network
+  /// (the dockerized backend is published on the host's 0.0.0.0:8000).
   ///
-  /// Override per platform/environment at build time:
-  ///   flutter run --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
+  /// Override per environment at build time, e.g.:
+  ///   flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api   # Android emu alias
+  ///   flutter run --dart-define=API_BASE_URL=http://127.0.0.1:8000/api  # iOS sim / web
+  ///   flutter run --dart-define=API_BASE_URL=http://192.168.x.x:8000/api # other LAN IP
   ///
-  /// Notes:
-  ///   - iOS simulator: use `http://127.0.0.1:8000/api` (localhost works).
-  ///   - Flutter web:   use `http://127.0.0.1:8000/api` (and ensure CORS).
-  ///   - Physical device: use your machine's LAN IP, e.g.
-  ///     `http://192.168.x.x:8000/api`.
+  /// If your machine's LAN IP changes, update the default below or pass
+  /// --dart-define.
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000/api',
+    defaultValue: 'http://192.168.11.144:8000/api',
   );
 
   /// Wall-clock timeout for connecting and receiving.
@@ -62,9 +62,9 @@ class AppConfig {
   static const String reverbKey =
       String.fromEnvironment('REVERB_APP_KEY', defaultValue: '');
 
-  /// Reverb host — defaults to the Android emulator loopback alias.
+  /// Reverb host — defaults to this machine's LAN IP (same host as the API).
   static const String reverbHost =
-      String.fromEnvironment('REVERB_HOST', defaultValue: '10.0.2.2');
+      String.fromEnvironment('REVERB_HOST', defaultValue: '192.168.11.144');
 
   static const int reverbPort =
       int.fromEnvironment('REVERB_PORT', defaultValue: 8080);

@@ -53,10 +53,13 @@ export interface QueueTicket {
   service: TicketServiceRef
 }
 
-export interface PresenceCounts {
+/** Per-group tallies returned by the live board (`counts` in the API). */
+export interface GroupCounts {
+  waiting: number
   active: number
   away: number
   offline: number
+  standby: number
 }
 
 export interface QueueGroup {
@@ -65,7 +68,7 @@ export interface QueueGroup {
   prefix: string
   now_serving: string | null
   waiting_count: number
-  presence_counts: PresenceCounts
+  counts: GroupCounts
   tickets: QueueTicket[]
 }
 

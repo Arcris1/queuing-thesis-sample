@@ -13,11 +13,11 @@ const props = defineProps<{
 const tickets = computed(() => props.group.tickets ?? [])
 
 const presenceTiles = computed(() => {
-  const c = props.group.presence_counts ?? { active: 0, away: 0, offline: 0 }
+  const c = props.group.counts ?? { active: 0, away: 0, offline: 0 }
   return [
-    { key: 'active', count: c.active, meta: PRESENCE_META.active },
-    { key: 'away', count: c.away, meta: PRESENCE_META.away },
-    { key: 'offline', count: c.offline, meta: PRESENCE_META.offline },
+    { key: 'active', count: c.active ?? 0, meta: PRESENCE_META.active },
+    { key: 'away', count: c.away ?? 0, meta: PRESENCE_META.away },
+    { key: 'offline', count: c.offline ?? 0, meta: PRESENCE_META.offline },
   ]
 })
 </script>
