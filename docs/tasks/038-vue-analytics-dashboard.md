@@ -1,7 +1,7 @@
 ---
 id: 038
 title: Vue analytics dashboard w/ charts
-status: Todo
+status: Done
 owner: vue-frontend-designer
 plan_ref: "Phase 8 / §12"
 depends_on: [25, 34]

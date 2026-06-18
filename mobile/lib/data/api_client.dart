@@ -5,10 +5,18 @@ import 'token_storage.dart';
 
 /// Friendly, typed error surfaced to the UI for any failed API call.
 class ApiException implements Exception {
-  const ApiException(this.message, {this.statusCode});
+  const ApiException(this.message, {this.statusCode, this.body});
 
   final String message;
   final int? statusCode;
+
+  /// The raw decoded response body, when the server returned a JSON object.
+  ///
+  /// Most callers only need [message]/[statusCode], but some endpoints carry
+  /// structured error detail that the UI wants to render — e.g. the check-in
+  /// 409 `{ distance_m, radius_m }`. Those callers read it from here instead of
+  /// re-issuing the request.
+  final Map<String, dynamic>? body;
 
   @override
   String toString() => message;
@@ -103,6 +111,9 @@ class ApiClient {
   ApiException _mapError(DioException e) {
     final status = e.response?.statusCode;
     final body = e.response?.data;
+    // Preserve the structured body so callers that need detail (e.g. the
+    // check-in 409 `{ distance_m, radius_m }`) can read it off the exception.
+    final bodyMap = body is Map<String, dynamic> ? body : null;
 
     // Laravel validation: 422 { message, errors: { field: [..] } }
     if (status == 422 && body is Map<String, dynamic>) {
@@ -110,12 +121,13 @@ class ApiClient {
       if (errors is Map<String, dynamic> && errors.isNotEmpty) {
         final first = errors.values.first;
         if (first is List && first.isNotEmpty) {
-          return ApiException(first.first.toString(), statusCode: 422);
+          return ApiException(first.first.toString(),
+              statusCode: 422, body: bodyMap);
         }
       }
       final message = body['message'];
       if (message is String && message.isNotEmpty) {
-        return ApiException(message, statusCode: 422);
+        return ApiException(message, statusCode: 422, body: bodyMap);
       }
     }
 
@@ -127,7 +139,8 @@ class ApiClient {
     }
 
     if (body is Map<String, dynamic> && body['message'] is String) {
-      return ApiException(body['message'] as String, statusCode: status);
+      return ApiException(body['message'] as String,
+          statusCode: status, body: bodyMap);
     }
 
     switch (e.type) {
@@ -145,6 +158,7 @@ class ApiClient {
         return ApiException(
           'Something went wrong. Please try again.',
           statusCode: status,
+          body: bodyMap,
         );
     }
   }

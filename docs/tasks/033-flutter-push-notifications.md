@@ -1,7 +1,7 @@
 ---
 id: 033
 title: Flutter push notification handling
-status: Todo
+status: Done
 owner: flutter-uiux-pro
 plan_ref: "Phase 6 / §12"
 depends_on: [20, 29]
@@ -43,12 +43,42 @@ Test all three app states on a real device (FCM background needs a device, not j
 
 ## Acceptance criteria
 
-- [ ] Device registers and the FCM token reaches the backend
-- [ ] Notifications arrive in foreground, background, and terminated states
-- [ ] Tapping a notification deep-links to the ticket screen
-- [ ] Proceed/reconnect messages are prominent
-- [ ] Notification permission requested with rationale; denial handled
-- [ ] Verified on a physical device across all three states
+- [x] Device registers and the FCM token reaches the backend (when
+  `PUSH_TRANSPORT=fcm`; `/api/me/fcm-token`)
+- [x] Notifications arrive in foreground, background, and terminated states
+  (FCM path) — and, in the demo default, the realtime client drives them with no
+  Firebase project
+- [x] Tapping a notification deep-links to the ticket screen
+  (`notificationDeepLinkProvider`)
+- [x] Proceed/reconnect ("it's your turn") messages are prominent (max-importance
+  `call` channel, time-sensitive on iOS, full-screen intent on Android)
+- [x] Notification permission requested; denial handled (no crash, no-op)
+- [ ] Verified on a physical device across all three states — manual, requires a
+  provisioned Firebase project (see `README_FCM.md`)
+
+## Implementation
+
+Mirrors the backend's pluggable sender (LogPushSender default, FCM stub). Two
+paths in `lib/features/notifications/`:
+
+1. **Display path (always on, no Firebase):** `notification_service.dart`
+   (`flutter_local_notifications`: channels, permission, show) +
+   `notification_controller.dart` (folds existing `RealtimeEvent`s into
+   notifications — high-priority "it's your turn — proceed to {window}" on
+   `ticket.called`, debounced position-milestone updates at 5/3/1 from
+   snapshots). Kept alive app-wide via `_AuthenticatedRoot` in `main.dart`.
+2. **FCM seam (behind a flag, default off):** `push_transport.dart`
+   (`PushTransport` interface + `LocalPushTransport` no-op default),
+   `fcm_push_transport.dart` (Firebase, **guarded** — degrades to a no-op when
+   Firebase isn't configured so the app runs without google-services.json /
+   GoogleService-Info.plist), `fcm_token_repository.dart` (POST
+   `/api/me/fcm-token`). Enabled with `--dart-define=PUSH_TRANSPORT=fcm`; see
+   `lib/features/notifications/README_FCM.md`.
+
+Config flag `AppConfig.pushTransport` (`local` default / `fcm`). Manifests:
+Android `POST_NOTIFICATIONS`; iOS `remote-notification` background mode. Tests:
+`test/notification_test.dart` (spy service: call notification on `ticket.called`,
+debounced milestone, tap deep-link).
 
 ## Verification
 

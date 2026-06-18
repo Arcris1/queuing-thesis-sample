@@ -4,6 +4,12 @@
          background location is requested for the thesis demo. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- QR check-in (§12, task 032): scan the office QR to confirm presence. -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <!-- Push notifications (§12, task 033): queue alerts on Android 13+ require
+         the runtime POST_NOTIFICATIONS permission. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="smart_queue_mobile"
         android:name="${applicationName}"

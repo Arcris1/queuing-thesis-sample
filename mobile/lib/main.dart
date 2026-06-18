@@ -5,6 +5,7 @@ import 'features/auth/auth_controller.dart';
 import 'features/auth/auth_state.dart';
 import 'features/auth/login_screen.dart';
 import 'features/home/home_screen.dart';
+import 'features/notifications/notification_controller.dart';
 import 'features/presence/heartbeat_controller.dart';
 import 'theme/app_theme.dart';
 
@@ -81,6 +82,10 @@ class _AuthenticatedRoot extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(presenceControllerProvider);
+    // Keep the notification controller alive for the whole session so queue
+    // events (and any FCM pushes) surface as OS notifications regardless of the
+    // current screen (task 033).
+    ref.watch(notificationControllerProvider);
     return const HomeScreen();
   }
 }

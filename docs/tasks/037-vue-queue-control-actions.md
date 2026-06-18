@@ -1,7 +1,7 @@
 ---
 id: 037
 title: Vue queue control actions UI
-status: Todo
+status: Done
 owner: vue-frontend-designer
 plan_ref: "Phase 8 / §7"
 depends_on: [21, 36]

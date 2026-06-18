@@ -6,6 +6,13 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Smart Queue uses your location only while you're in a queue, to confirm you're within range of the office when it's your turn.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Smart Queue uses the camera to scan the office QR code so you can check in when you arrive.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../theme/app_theme.dart';
+import '../checkin/qr_scan_screen.dart';
 import '../location/widgets/location_permission_card.dart';
 import '../location/widgets/proximity_indicator.dart';
 import '../presence/heartbeat_controller.dart';
@@ -188,7 +189,9 @@ class _ActiveView extends ConsumerWidget {
           ],
           const SizedBox(height: AppSpacing.xl),
           EtaCard(eta: ticket.etaPrediction),
-          const SizedBox(height: AppSpacing.xxl),
+          const SizedBox(height: AppSpacing.xl),
+          const _CheckinButton(),
+          const SizedBox(height: AppSpacing.lg),
           _LeaveButton(isLeaving: state.isLeaving),
           if (state.errorMessage != null) ...[
             const SizedBox(height: AppSpacing.md),
@@ -439,6 +442,32 @@ class _LoadingView extends StatelessWidget {
 // ---------------------------------------------------------------------------
 // Shared pieces
 // ---------------------------------------------------------------------------
+
+/// "Scan QR to check in" CTA. Opens the camera scanner; when it returns a
+/// checked-in (Ready) ticket, re-seeds the status controller so the screen
+/// reflects the new state immediately, and asks the realtime client to refresh.
+class _CheckinButton extends ConsumerWidget {
+  const _CheckinButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return FilledButton.icon(
+      onPressed: () => _openScanner(context, ref),
+      icon: const Icon(Icons.qr_code_scanner_rounded),
+      label: const Text('Scan QR to check in'),
+    );
+  }
+
+  Future<void> _openScanner(BuildContext context, WidgetRef ref) async {
+    final ticket = await Navigator.of(context).push<QueueTicket>(
+      MaterialPageRoute(builder: (_) => const QrScanScreen()),
+    );
+    if (ticket == null) return;
+    final notifier = ref.read(ticketStatusControllerProvider.notifier);
+    notifier.start(ticket);
+    await notifier.refresh();
+  }
+}
 
 class _LeaveButton extends ConsumerWidget {
   const _LeaveButton({required this.isLeaving});

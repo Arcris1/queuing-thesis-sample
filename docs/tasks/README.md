@@ -40,14 +40,14 @@ copying [`TEMPLATE.md`](./TEMPLATE.md), then add it here and keep its status cur
 | 029 | Flutter ticket/status screen w/ realtime + ETA | Phase 6 / §12 | FL | Done | 010, 019, 024, 028 |
 | 030 | Flutter background GPS location updates | Phase 6 / §8 | FL | Done | 013, 028 |
 | 031 | Flutter background heartbeat service | Phase 6 / §9 | FL | Done | 015, 028 |
-| 032 | Flutter QR scan check-in | Phase 6 / §12 | FL | In Progress | 014, 029 |
-| 033 | Flutter push notification handling | Phase 6 / §12 | FL | In Progress | 020, 029 |
+| 032 | Flutter QR scan check-in | Phase 6 / §12 | FL | Done | 014, 029 |
+| 033 | Flutter push notification handling | Phase 6 / §12 | FL | Done | 020, 029 |
 | 034 | Vue scaffold + Tailwind/Pinia/Router | Phase 8 / §4 | VUE | Done | 001 |
 | 035 | Vue staff login/auth | Phase 8 / §7 Auth | VUE | Done | 002, 034 |
-| 036 | Vue live queue board w/ presence states | Phase 8 / §12 | VUE | In Progress | 019, 025, 034 |
-| 037 | Vue queue control actions UI | Phase 8 / §7 | VUE | In Progress | 021, 036 |
-| 038 | Vue analytics dashboard w/ charts | Phase 8 / §12 | VUE | In Progress | 025, 034 |
-| 039 | ISO 25010 evaluation instrument + data collection | Phase 9 / §14 | BE | In Progress | 025 |
+| 036 | Vue live queue board w/ presence states | Phase 8 / §12 | VUE | Done | 019, 025, 034 |
+| 037 | Vue queue control actions UI | Phase 8 / §7 | VUE | Done | 021, 036 |
+| 038 | Vue analytics dashboard w/ charts | Phase 8 / §12 | VUE | Done | 025, 034 |
+| 039 | ISO 25010 evaluation instrument + data collection | Phase 9 / §14 | BE | Done | 025 |
 | 040 | Windows, window_queue_groups & window_assignments schema + seeder | Phase 1 / §5,§6 | BE | Done | 004 |
 | 041 | Window routing engine (oldest-eligible assignment service) | Phase 2 / §5,§7 | BE | Done | 005, 040 |
 | 042 | Catalog endpoints (offices + services grouped by queue group) | Phase 1 / §7 | BE | Done | 004 |

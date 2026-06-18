@@ -1,7 +1,7 @@
 ---
 id: 032
 title: Flutter QR scan check-in
-status: Todo
+status: Done
 owner: flutter-uiux-pro
 plan_ref: "Phase 6 / §12"
 depends_on: [14, 29]
@@ -38,17 +38,39 @@ animation (150–300 ms).
 
 ## API / contract (if applicable)
 
-- `POST /api/checkin` `{ qr_token, latitude, longitude }` →
-  `{ ticket_number, status, within_radius, distance_m }` (task 014).
+- Live contract (implemented): `POST /api/checkin` `{ ticket_number, latitude,
+  longitude }` → `200 { data: <ticket> }` (Ready) within range; `409 OutOfRange
+  { distance_m, radius_m }` when too far. The office QR encodes JSON
+  `{"t":"qms-checkin","ticket_number":"A-007"}`.
+- Deviation from the original draft: the QR carries the **ticket number** inside
+  a tagged envelope (not an opaque `qr_token`), and the body keys the ticket as
+  `ticket_number`. The server is still authoritative (re-validates ticket +
+  account + location); the client only relays raw GPS.
 
 ## Acceptance criteria
 
-- [ ] Scanning a valid office QR within range checks the student in
-- [ ] Wrong-office, out-of-range, and invalid-token errors are shown distinctly
-- [ ] Camera permission handled (request + denial path)
-- [ ] Success state reflected on the ticket screen
-- [ ] Accessible scanner UI with clear feedback
-- [ ] Widget/integration test covers a mocked successful scan
+- [x] Scanning a valid office QR within range checks the student in
+- [x] Wrong-office, out-of-range, and invalid-token errors are shown distinctly
+- [x] Camera permission handled (request + denial path)
+- [x] Success state reflected on the ticket screen
+- [x] Accessible scanner UI with clear feedback
+- [x] Widget/integration test covers a mocked successful scan
+
+## Implementation
+
+- `lib/features/checkin/`: `checkin_payload.dart` (QR envelope decode +
+  validation), `checkin_repository.dart` (POST /checkin; maps 409 →
+  `CheckinOutOfRange`), `checkin_controller.dart` (Riverpod Notifier: debounced
+  scan → GPS → post → phase state), `qr_scan_screen.dart` (mobile_scanner camera
+  + torch/flip + permission/unavailable handling + per-phase result panel),
+  `widgets/scanner_overlay.dart` (framed reticle, scan line, instruction).
+- Entry point: "Scan QR to check in" CTA on the active ticket status view; on a
+  successful scan it pops back with the Ready ticket and re-seeds the screen.
+- `data/api_client.dart`: `ApiException` now carries the raw `body` so the
+  repository can read `distance_m`/`radius_m` off a 409.
+- Manifests: Android `CAMERA`; iOS `NSCameraUsageDescription`.
+- Tests: `test/checkin_test.dart` (payload parsing, success+routing, 409 message,
+  non-checkin ignored, denied-location, repository 409 mapping).
 
 ## Verification
 

@@ -1,7 +1,7 @@
 ---
 id: 036
 title: Vue live queue board w/ presence states
-status: Todo
+status: Done
 owner: vue-frontend-designer
 plan_ref: "Phase 8 / §12"
 depends_on: [19, 25, 34]

@@ -7,6 +7,11 @@ const auth = useAuthStore()
 const router = useRouter()
 const loggingOut = ref(false)
 
+const navLinks = [
+  { name: 'board', label: 'Queue board' },
+  { name: 'analytics', label: 'Analytics' },
+] as const
+
 const user = computed(() => auth.user)
 const initials = computed(() => {
   const name = user.value?.name?.trim()
@@ -37,16 +42,32 @@ async function handleLogout() {
 
 <template>
   <header class="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
-    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-      <div class="flex items-center gap-2.5">
-        <span
-          class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white"
-          aria-hidden="true"
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+      <div class="flex items-center gap-5">
+        <RouterLink
+          :to="{ name: 'board' }"
+          class="flex items-center gap-2.5 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
         >
-          SQ
-        </span>
-        <span class="text-sm font-semibold text-slate-900 sm:text-base">Smart Queue</span>
-        <span class="hidden text-sm text-slate-400 sm:inline">/ Staff Dashboard</span>
+          <span
+            class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white"
+            aria-hidden="true"
+          >
+            SQ
+          </span>
+          <span class="text-sm font-semibold text-slate-900 sm:text-base">Smart Queue</span>
+        </RouterLink>
+
+        <nav aria-label="Primary" class="hidden items-center gap-1 sm:flex">
+          <RouterLink
+            v-for="link in navLinks"
+            :key="link.name"
+            :to="{ name: link.name }"
+            class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+            active-class="bg-brand-50 text-brand-700 hover:bg-brand-50 hover:text-brand-700"
+          >
+            {{ link.label }}
+          </RouterLink>
+        </nav>
       </div>
 
       <div class="flex items-center gap-3">
@@ -83,5 +104,21 @@ async function handleLogout() {
         </button>
       </div>
     </div>
+
+    <!-- Mobile nav row -->
+    <nav
+      aria-label="Primary"
+      class="flex items-center gap-1 border-t border-slate-100 px-4 py-1.5 sm:hidden"
+    >
+      <RouterLink
+        v-for="link in navLinks"
+        :key="link.name"
+        :to="{ name: link.name }"
+        class="flex-1 rounded-lg px-3 py-2 text-center text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+        active-class="bg-brand-50 text-brand-700 hover:bg-brand-50 hover:text-brand-700"
+      >
+        {{ link.label }}
+      </RouterLink>
+    </nav>
   </header>
 </template>

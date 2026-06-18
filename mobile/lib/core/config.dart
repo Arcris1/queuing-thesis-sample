@@ -72,4 +72,31 @@ class AppConfig {
   /// `ws` (default, local) or `wss` (TLS).
   static const String reverbScheme =
       String.fromEnvironment('REVERB_SCHEME', defaultValue: 'ws');
+
+  // --- Push notifications (task 033) -----------------------------------------
+  //
+  // The notification *display* path (flutter_local_notifications) and the
+  // realtime-driven triggers always work — no Firebase needed. [pushTransport]
+  // only selects how *remote* pushes are delivered:
+  //
+  //   - `local` (default) — no remote transport. Notifications are driven by the
+  //     in-app realtime client (polling / WebSocket). This is the demo default
+  //     and runs without any Firebase project, google-services.json, or
+  //     GoogleService-Info.plist.
+  //   - `fcm`             — enable Firebase Cloud Messaging. Requires a
+  //     provisioned Firebase project + platform config files (see
+  //     `lib/features/notifications/README_FCM.md`). When enabled, the device
+  //     token is POSTed to `/api/me/fcm-token` and foreground/background/
+  //     terminated messages route into the same notification display path.
+  //
+  // Mirrors the backend's pluggable sender (LogPushSender default, FCM stub):
+  // the app demos end-to-end without provisioning Firebase, and a single
+  // `--dart-define=PUSH_TRANSPORT=fcm` flips on the real transport.
+  static const String pushTransport = String.fromEnvironment(
+    'PUSH_TRANSPORT',
+    defaultValue: 'local',
+  );
+
+  /// True when remote FCM delivery is enabled (see [pushTransport]).
+  static const bool useFirebaseMessaging = pushTransport == 'fcm';
 }

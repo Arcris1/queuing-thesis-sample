@@ -44,6 +44,9 @@ dependencies:
   # Optional WebSocket transport for the realtime client (Reverb/Pusher seam).
   # Polling is the default driver; see ws_realtime_client.dart to enable WS.
   web_socket_channel: ^3.0.1
+  flutter_local_notifications: ^22.0.1
+  firebase_core: ^4.11.0
+  firebase_messaging: ^16.4.0
 
 dev_dependencies:
   flutter_test:

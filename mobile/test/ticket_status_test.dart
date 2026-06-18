@@ -255,6 +255,8 @@ void main() {
 
     final leaveBtn = find.widgetWithText(OutlinedButton, 'Leave queue');
     await tester.scrollUntilVisible(leaveBtn, 200);
+    await tester.ensureVisible(leaveBtn);
+    await tester.pumpAndSettle();
     await tester.tap(leaveBtn);
     await tester.pumpAndSettle();
 
