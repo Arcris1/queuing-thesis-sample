@@ -1,7 +1,7 @@
 ---
 id: 012
 title: Haversine distance service
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 3 / §8"
 depends_on: [4]

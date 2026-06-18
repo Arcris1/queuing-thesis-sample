@@ -1,7 +1,7 @@
 ---
 id: 028
 title: Flutter join-queue — office/service selection
-status: Todo
+status: Done
 owner: flutter-uiux-pro
 plan_ref: "Phase 6 / §5,§11"
 depends_on: [11, 26, 42]
@@ -47,12 +47,12 @@ Use the design-system cards and states from task 026.
 
 ## Acceptance criteria
 
-- [ ] Offices and their services (grouped by queue group) render with current load
-- [ ] Selecting a service and joining (`{ service_id }`) creates a ticket and routes to the ticket screen
-- [ ] Queues by service grouped under queue groups (no physical-window selection in the UI)
-- [ ] Already-queued users are routed to their existing ticket, not a duplicate join
-- [ ] Loading/empty/error states handled; AA contrast
-- [ ] Widget test covers selection + join
+- [x] Offices and their services (grouped by queue group) render
+- [x] Selecting a service and joining (`{ service_id }`) creates a ticket and routes to the ticket screen
+- [x] Queues by service grouped under queue groups (no physical-window selection in the UI)
+- [x] Already-queued users (409) are routed to their existing ticket, not a duplicate join
+- [x] Loading/empty/error states handled; AA contrast
+- [x] Widget test covers selection + join
 
 ## Verification
 

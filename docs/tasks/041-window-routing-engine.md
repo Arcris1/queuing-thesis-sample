@@ -1,7 +1,7 @@
 ---
 id: 041
 title: Window routing engine (oldest-eligible assignment service)
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 2 / §5,§7"
 depends_on: [40, 5]
@@ -62,13 +62,13 @@ assigned ticket. Document the broadcast contract handoff to task 019 (`TicketCal
 
 ## Acceptance criteria
 
-- [ ] Assigns the oldest eligible ticket across the window's queue groups (priority desc, then FIFO)
-- [ ] Two concurrent available-calls never assign the same ticket (transaction + lock)
-- [ ] Returns `null` cleanly when no eligible ticket exists
-- [ ] Enforces at most one open `window_assignments` row per window
-- [ ] Ineligible (away/offline/out-of-range) tickets are skipped via the eligibility predicate
-- [ ] Attaching a queue group to an idle window immediately changes what it can be assigned (no code change)
-- [ ] Unit/feature tests cover multi-group selection, priority, concurrency, and empty-queue
+- [x] Assigns the oldest eligible ticket across the window's queue groups (priority desc, then FIFO)
+- [x] Two concurrent available-calls never assign the same ticket (transaction + lock)
+- [x] Returns `null` cleanly when no eligible ticket exists
+- [x] Enforces at most one open `window_assignments` row per window
+- [x] Ineligible (away/offline/out-of-range) tickets are skipped via the eligibility predicate
+- [x] Attaching a queue group to an idle window immediately changes what it can be assigned (no code change)
+- [x] Unit/feature tests cover multi-group selection, priority, concurrency, and empty-queue
 
 ## Verification
 

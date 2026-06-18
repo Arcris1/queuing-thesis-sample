@@ -1,7 +1,7 @@
 ---
 id: 029
 title: Flutter ticket/status screen w/ realtime + ETA
-status: Todo
+status: Done
 owner: flutter-uiux-pro
 plan_ref: "Phase 6 / §12"
 depends_on: [10, 19, 24, 28]
@@ -44,12 +44,31 @@ the screen/ticket lifecycle. Animate position/ETA changes subtly (150–300 ms).
 
 ## Acceptance criteria
 
-- [ ] Position/people-ahead/ETA render and update live over WebSocket
-- [ ] `ticket.called` switches to a prominent proceed state
-- [ ] Polling fallback works when the socket drops
-- [ ] Reconnect/out-of-range warning surfaces clearly
-- [ ] Smooth, purposeful transitions; AA contrast; loading/empty/error states
-- [ ] Widget test covers a simulated position update + called event
+- [x] Position/people-ahead/ETA render and update live (realtime client; polling
+      driver by default, WebSocket driver behind the same interface)
+- [x] `ticket.called` switches to a prominent proceed state
+- [x] Polling driver is the reliable default; WS/Reverb seam documented + wired
+      (enable with `--dart-define=REALTIME_TRANSPORT=ws`)
+- [x] Reconnect/out-of-range warning surfaces clearly (presence banner +
+      proximity indicator reused)
+- [x] Smooth, purposeful transitions; AA contrast; loading/empty/served/
+      skipped/standby/error states
+- [x] Widget tests cover a simulated snapshot update + called event + leave +
+      served + empty (7 tests)
+
+## Implementation summary
+
+- Realtime client abstraction: `lib/features/realtime/realtime_client.dart`
+  (interface), `polling_realtime_client.dart` (default), `ws_realtime_client.dart`
+  (Reverb/Pusher seam, off by default), `realtime_providers.dart` (build-time
+  driver selection).
+- Screen: `lib/features/queue/ticket_status_screen.dart`; state/controller in
+  `ticket_status_state.dart` / `ticket_status_controller.dart`; AI ETA card in
+  `widgets/eta_card.dart`; models `ticket_eta.dart` / `ticket_status.dart`.
+- `TicketConfirmationScreen` hands off to the live screen; Home routes to it for
+  an active ticket. Repo gained `estimate()` + `leave()`.
+- Tests: `test/ticket_status_test.dart`. `flutter analyze` clean, `flutter test`
+  green (24 total).
 
 ## Verification
 

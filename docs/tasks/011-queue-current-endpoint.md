@@ -1,7 +1,7 @@
 ---
 id: 011
 title: Queue current endpoint (GET /api/queue/current)
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 1 / §7"
 depends_on: [5]
@@ -44,11 +44,11 @@ ticket number; `waiting_count` counts only `Waiting`/`Ready` in that group.
 
 ## Acceptance criteria
 
-- [ ] Returns correct `current_number` and `waiting_count` **per queue group**
-- [ ] Works with and without `office_id`
-- [ ] No authentication required
-- [ ] Resource-shaped response; no N+1 (queue groups eager-loaded)
-- [ ] Feature test covers single and all-office responses with multiple groups
+- [x] Returns correct `current_number` and `waiting_count` **per queue group**
+- [x] Works with and without `office_id`
+- [x] No authentication required
+- [x] Resource-shaped response; no N+1 (queue groups eager-loaded)
+- [x] Feature test covers single and all-office responses with multiple groups
 
 ## Verification
 

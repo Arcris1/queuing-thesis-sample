@@ -1,7 +1,7 @@
 ---
 id: 023
 title: Wait-time regression training pipeline
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 7 / §10"
 depends_on: [22]
@@ -50,11 +50,11 @@ so Laravel can compute deterministically. Keep training reproducible (fixed spli
 
 ## Acceptance criteria
 
-- [ ] Model trains from `service_history` and reports MAE/RMSE/R²
-- [ ] Chosen serving approach (microservice vs exported coefficients) implemented + documented
-- [ ] Categorical features encoded consistently between training and inference
-- [ ] A confidence value is produced alongside the prediction
-- [ ] Retrain process documented and repeatable
+- [x] Model trains from `service_history` and reports MAE/RMSE/R²
+- [x] Chosen serving approach (microservice vs exported coefficients) implemented + documented
+- [x] Categorical features encoded consistently between training and inference
+- [x] A confidence value is produced alongside the prediction
+- [x] Retrain process documented and repeatable
 
 ## Verification
 

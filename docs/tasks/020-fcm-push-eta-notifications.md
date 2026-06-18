@@ -43,11 +43,23 @@ endpoints if added.
 
 ## Acceptance criteria
 
-- [ ] Sends ETA/position/warning/proceed pushes to the user's FCM token
-- [ ] Each send persists a `notifications` row
-- [ ] Sends run via queued Jobs; missing tokens handled without error
-- [ ] Debounced — no duplicate spam for unchanged state
-- [ ] Tests fake the FCM client and assert payloads + persisted rows
+- [x] `NotificationService` with typed methods: `proceed`, `positionMilestone`, `etaUpdate`, `reconnectWarning`
+- [x] Each send persists a `push_notifications` row (type/message/sent_at)
+- [x] Pluggable transport via `PushSender` contract: `LogPushSender` (default) + `FcmPushSender` stub
+- [x] FCM stays optional — bound by `services.fcm.driver`; `FcmPushSender` no-ops without credentials
+- [x] Missing/blank `fcm_token` handled without error
+- [x] Debounce helpers: `crossedMilestone()` (position) + placeholder `estimateMinutes()` (ETA, task 024 replaces)
+- [x] `POST /api/me/fcm-token` stores the user's device token
+- [x] Tests fake the sender and assert payloads + persisted rows
+
+Notes / deviations:
+- Delivery is synchronous through the `PushSender` (driver-selected), not a
+  dedicated `ShouldQueue` Job. The transport is cheap (log in dev; a single FCM
+  HTTP call in prod) and runs after the DB commit. If the FCM call cost grows,
+  wrap `PushSender::send` in a queued job — `NotificationService` is unchanged.
+- The FCM HTTP v1 call itself is a clearly-marked stub in `FcmPushSender`
+  (needs a provisioned Google service account to mint the OAuth token); the row
+  persistence + transport seam + token handling around it are complete.
 
 ## Verification
 

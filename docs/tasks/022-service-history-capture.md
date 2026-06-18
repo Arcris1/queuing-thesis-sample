@@ -1,7 +1,7 @@
 ---
 id: 022
 title: Service history capture on serve + seed data
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 7 / §10"
 depends_on: [21]
@@ -47,11 +47,11 @@ N/A — write path on serve + seeder.
 
 ## Acceptance criteria
 
-- [ ] Every serve writes one `service_history` row incl. `queue_group_id`, `window_id`, `active_windows`
-- [ ] `duration_minutes` derived correctly from the `window_assignments` timestamps
-- [ ] Seeder produces a few months of varied synthetic data per office/queue group/service
-- [ ] Peak-hour/day and window-count variance is visible in seeded data
-- [ ] Tests assert a history row is created on serve
+- [x] Every serve writes one `service_history` row incl. `queue_group_id`, `window_id`, `active_windows`
+- [x] `duration_minutes` derived correctly from the `window_assignments` timestamps
+- [x] Seeder produces a few months of varied synthetic data per office/queue group/service
+- [x] Peak-hour/day and window-count variance is visible in seeded data
+- [x] Tests assert a history row is created on serve
 
 ## Verification
 

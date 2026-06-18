@@ -1,7 +1,7 @@
 ---
 id: 014
 title: QR check-in endpoint (POST /api/checkin)
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 3 / §8,§12"
 depends_on: [8, 12]

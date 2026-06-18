@@ -1,7 +1,7 @@
 ---
 id: 021
 title: Window/staff endpoints (available/serve/skip/recall)
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 2 / §7"
 depends_on: [41, 19, 5]
@@ -58,13 +58,13 @@ duration analytics. The "current number per queue group" advances naturally from
 
 ## Acceptance criteria
 
-- [ ] `available` assigns the oldest eligible ticket via the routing engine (task 041), not inline logic
-- [ ] Ineligible tickets are skipped/graced per task 017, never assigned
-- [ ] `serve`/`skip` set correct terminal state + close the `window_assignments` row with timestamps
-- [ ] `recall` re-announces without mutating state
-- [ ] Only staff/admin of the window's office may call these (policy enforced)
-- [ ] Actions broadcast the relevant events after commit
-- [ ] Feature tests cover available/serve/skip/recall + authorization + empty-queue
+- [x] `available` assigns the oldest eligible ticket via the routing engine (task 041), not inline logic
+- [x] Ineligible tickets are skipped/graced per task 017, never assigned
+- [x] `serve`/`skip` set correct terminal state + close the `window_assignments` row with timestamps
+- [x] `recall` re-announces without mutating state
+- [x] Only staff/admin of the window's office may call these (policy enforced)
+- [x] Actions broadcast the relevant events after commit
+- [x] Feature tests cover available/serve/skip/recall + authorization + empty-queue
 
 ## Verification
 

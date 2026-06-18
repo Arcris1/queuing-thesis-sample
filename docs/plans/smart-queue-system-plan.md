@@ -56,7 +56,7 @@ from far away) and keeping every window productive.
                          |
                     REST API (JWT)
                          |
-                  Laravel 12 Backend
+                  Laravel 13 Backend
                          |
         +----------------+-----------------+
         |                |                 |
@@ -67,7 +67,7 @@ from far away) and keeping every window productive.
 - **Frontend (student):** Flutter — queue ticket, push notifications, GPS tracking, QR scanning.
 - **Frontend (staff/admin):** Web dashboard — real-time queue, presence states, window control,
   analytics.
-- **Backend:** Laravel 12 REST API with JWT authentication.
+- **Backend:** Laravel 13 REST API with JWT authentication.
 - **Queue routing engine:** server-side service that maps available windows to the oldest eligible
   waiting ticket in their queue groups (see §5).
 - **Database:** PostgreSQL or MySQL.
@@ -81,7 +81,7 @@ from far away) and keeping every window productive.
 | Layer | Technology |
 |-------|-----------|
 | Mobile app | Flutter |
-| Backend API | Laravel 12 (REST) |
+| Backend API | Laravel 13 (REST) |
 | Auth | JWT |
 | Database | PostgreSQL or MySQL |
 | Realtime | Laravel Reverb / Pusher / WebSockets |
@@ -240,10 +240,10 @@ Notes:
 - `POST /api/checkin` — QR-based arrival check-in
 
 **Window / staff** (routing-engine driven)
-- `POST /api/window/{window}/available` — mark window free → engine assigns & returns the next ticket
-- `POST /api/window/{window}/serve` — complete current assignment (writes `service_history`)
-- `POST /api/window/{window}/skip` — skip current (away/offline or no-show) → standby/next
-- `POST /api/window/{window}/recall` — re-announce the current number
+- `POST /api/windows/{window}/available` — mark window free → engine assigns & returns the next ticket
+- `POST /api/windows/{window}/serve` — complete current assignment (writes `service_history`)
+- `POST /api/windows/{window}/skip` — skip current (away/offline or no-show) → standby/next
+- `POST /api/windows/{window}/recall` — re-announce the current number
 
 **Admin**
 - `GET  /api/admin/analytics`
@@ -263,8 +263,9 @@ a = sin²((lat2−lat1)/2) + cos(lat1)·cos(lat2)·sin²((lon2−lon1)/2)
 distance = 2 · R · asin(√a)
 ```
 
-**Example:** Office (14.600100, 121.050100) vs student (14.600120, 121.050130) ≈ **8.4 m** →
-within 15 m → eligible.
+**Example:** Office (14.600100, 121.050100) vs student (14.600120, 121.050130) ≈ **3.9 m** →
+within 15 m → eligible. (Computed via the Haversine formula above; verified in
+`GeofenceServiceTest`.)
 
 - `distance ≤ radius (15 m)` → ticket eligible for assignment by the routing engine.
 - `distance > radius` when turn approaches → warning notification + grace period.
@@ -373,7 +374,7 @@ routing engine never calls an absent student.
 ## 13. Implementation Phases
 
 **Phase 1 — Backend foundation (API-first)**
-- Laravel 12 project, JWT auth, database schema/migrations.
+- Laravel 13 project, JWT auth, database schema/migrations.
 - Schema for offices, **queue_groups, services (with queue_group_id), windows, window_queue_groups**,
   queue_tickets, window_assignments.
 - Seeders for offices, queue groups, services, and windows (per §5.1).

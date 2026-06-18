@@ -1,0 +1,30 @@
+---
+name: project-mobile-conventions
+description: Smart Queue Flutter app — design tokens, state mgmt, folder layout, API config, and catalog/queue feature patterns
+metadata:
+  type: project
+---
+
+Smart Queue student mobile app lives at `/Users/arcrissilang/Development/queuing-thesis-sample/mobile`. Pure REST/WS client of the Laravel API; zero business logic on device.
+
+**Why:** Thesis project; API-first architecture is a hard rule (see root CLAUDE.md).
+
+**How to apply when building screens:**
+- Theme/tokens in `lib/theme/app_theme.dart`: `AppTheme.light()/dark()` (M3, seed `0xFF2563EB` brand blue, Inter via google_fonts). Spacing tokens `AppSpacing.xs/sm/md/lg/xl/xxl` = 4/8/12/16/24/32. Always consume tokens, never hard-code.
+- State mgmt: **Riverpod 3.x** (`flutter_riverpod`). Use `Notifier`/`NotifierProvider` for controllers; `FutureProvider.autoDispose`(`.family`) for read-only async catalog data (offices, per-office services). Providers colocated with feature.
+- Folder layout: `lib/core/` (config, validators), `lib/data/` (api_client, token_storage), `lib/features/<name>/` (models + repository + controller/providers + screens + `widgets/`). Features so far: `auth/`, `home/`, `catalog/` (offices+services), `queue/` (join+ticket).
+- Shared providers `apiClientProvider`/`tokenStorageProvider`/`authRepositoryProvider` live in `lib/features/auth/auth_controller.dart` — other features import `apiClientProvider` from there.
+- API base URL: single constant `AppConfig.apiBaseUrl` in `lib/core/config.dart` via `String.fromEnvironment('API_BASE_URL', default: 'http://10.0.2.2:8000/api')`. iOS sim/web use `127.0.0.1:8000/api`; physical device uses LAN IP. Override with `--dart-define`.
+- API envelope: backend wraps in `{ "data": ... }`. `ApiClient.get/post` unwrap to a Map; `ApiClient.getList` unwraps a `{ "data": [...] }` list (used by `GET /api/offices`). `GET /api/queue/status` returns `{ data: null }` when no ticket → `get` returns `{}`, so treat empty map as null.
+- JWT persisted via `flutter_secure_storage` in `lib/data/token_storage.dart`. ApiClient interceptor attaches `Authorization: Bearer` (omitted when no token, so public catalog endpoints work).
+- Errors: `ApiException` carries `statusCode`. 401→creds msg, 422→first Laravel validation error, network/timeout→friendly copy. **409 = already-in-queue**: the queue controller recovers the existing ticket via `/queue/status` and routes to it instead of duplicating the join (§ business rule, never double-join).
+
+**Catalog/queue domain (§5 — the core data rule):** students queue by **service**, never by window. Model chain Office → QueueGroup → Service. UI must surface services **grouped under their queue group** (group header + prefix chip as context); the tappable choice is always the service, never a physical window. Confirm-then-join via a bottom sheet that owns the join request (its spinner tracks real progress), then routes to `TicketConfirmationScreen` (task 029 will extend it into the live status screen).
+
+Reusable widgets: auth — `lib/features/auth/widgets/{brand_header.dart (Hero tag 'app-glyph'), auth_error_banner.dart}`; catalog — `lib/features/catalog/widgets/state_views.dart` (`LoadingView`, `MessageView` with retry — the standard loading/empty/error trio).
+
+**Presence/geofence (§8/§9, tasks 030/031):** `lib/features/location/` (LocationService wrapping geolocator + LocationRepository → POST /location/update + ProximityIndicator/LocationPermissionCard widgets) and `lib/features/presence/` (HeartbeatRepository → POST /heartbeat, PresenceController = the 30s lifecycle loop). The loop reacts to `hasActiveTicketProvider`/`activeTicketProvider` in `lib/features/queue/active_ticket_provider.dart` (a ticket is "active" unless its status is terminal: served/completed/cancelled/removed/no_show). It prefers sending GPS *through* the heartbeat (backend treats gps_location as a location ping too) and only falls back to /location/update when the heartbeat didn't echo a geofence. Battery via `battery_plus` (7.0.0); network is a static "online" label (the POST itself is the liveness proof). Loop is foreground/whileInUse only — true background execution is out of scope (documented in heartbeat_controller + task 031). Kept alive app-wide via `_AuthenticatedRoot` in main.dart (`ref.watch(presenceControllerProvider)`); idle until a ticket is active (battery-friendly). Heartbeat interval = `AppConfig.heartbeatInterval` (HEARTBEAT_SECONDS dart-define, default 30). Manifests: AndroidManifest ACCESS_FINE/COARSE_LOCATION, iOS NSLocationWhenInUseUsageDescription.
+
+**Riverpod NotifierProvider gotcha:** a `Notifier.build()` that does `ref.listen(..., fireImmediately: true)` must NOT touch `state` synchronously in the callback — when the dependency is already truthy at first build it fires *during* build and reads an uninitialized provider (StateError). Defer the side-effect via `Future.microtask` + a `_disposed` guard (see PresenceController). Also: in `ProviderContainer` tests a non-watched provider gets disposed mid-async-tick — hold it with `container.listen(provider, (_, _) {})` not `container.read`.
+
+**Testing:** override `*RepositoryProvider` with in-memory fakes via `ProviderScope(overrides: [...])` to avoid Dio/secure storage (see `test/widget_test.dart` FakeAuthRepository, `test/join_queue_test.dart` FakeCatalog/FakeQueueRepository, `test/presence_heartbeat_test.dart` Fake heartbeat/location/telemetry). Any screen reachable from join now mounts the presence loop, so its tests must also override heartbeatRepository/locationRepository/locationService/deviceTelemetry providers (offline stubs) — see join_queue_test `_Offline*`. `flutter analyze` and `flutter test` must both stay green. Notes: `unnecessary_underscores` lint flags `(_, __)` — use `(_, _)`; `use_null_aware_elements` wants `'k': ?nullableVar` instead of `if (v != null) 'k': v` in map literals.

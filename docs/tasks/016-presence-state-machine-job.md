@@ -1,7 +1,7 @@
 ---
 id: 016
 title: Presence state machine + scheduled re-evaluation job
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 4 / §9"
 depends_on: [15]
@@ -41,11 +41,11 @@ N/A — scheduled job; effects observed via status endpoints and dashboards.
 
 ## Acceptance criteria
 
-- [ ] Tickets transition Active→Away→Offline→Removed at the configured thresholds
-- [ ] Job is registered on the scheduler and is idempotent
-- [ ] Removed tickets leave active position counts but persist in the DB
-- [ ] Transition emits an event/hook for downstream notify/broadcast
-- [ ] Tests use time travel (`travel()`) to assert each threshold
+- [x] Tickets transition Active→Away→Offline→Removed at the configured thresholds
+- [x] Job is registered on the scheduler and is idempotent
+- [x] Removed tickets leave active position counts but persist in the DB
+- [x] Transition emits an event/hook for downstream notify/broadcast (hook comments left for task 019)
+- [x] Tests use time travel (`travel()`) to assert each threshold
 
 ## Verification
 

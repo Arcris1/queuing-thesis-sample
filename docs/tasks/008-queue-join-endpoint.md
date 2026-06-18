@@ -1,7 +1,7 @@
 ---
 id: 008
 title: Queue join endpoint (POST /api/queue/join)
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 1 / §5,§7,§11"
 depends_on: [2, 4, 5]
@@ -52,13 +52,13 @@ tickets inside the transaction to avoid race-condition duplicates. Build ticket_
 
 ## Acceptance criteria
 
-- [ ] Joining creates a `Waiting` ticket in the service's queue group with a correct group-prefixed number
-- [ ] Position reflects the student's place **within the queue group** (priority-aware)
-- [ ] Concurrent joins never produce duplicate ticket numbers (transaction + lock)
-- [ ] Duplicate active ticket for same queue group/day is rejected
-- [ ] Office/queue group are derived server-side from the service (client office_id not trusted)
-- [ ] Logic in `QueueService`; controller is thin; response via Resource
-- [ ] Feature tests cover success, duplicate, and concurrency
+- [x] Joining creates a `Waiting` ticket in the service's queue group with a correct group-prefixed number
+- [x] Position reflects the student's place **within the queue group** (priority-aware)
+- [x] Concurrent joins never produce duplicate ticket numbers (transaction + lock)
+- [x] Duplicate active ticket for same queue group/day is rejected
+- [x] Office/queue group are derived server-side from the service (client office_id not trusted)
+- [x] Logic in `QueueService`; controller is thin; response via Resource
+- [x] Feature tests cover success, duplicate, and concurrency
 
 ## Verification
 

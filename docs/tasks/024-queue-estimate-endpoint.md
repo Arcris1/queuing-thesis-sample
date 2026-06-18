@@ -1,7 +1,7 @@
 ---
 id: 024
 title: queue/estimate endpoint (GET /api/queue/estimate)
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 7 / §7,§10"
 depends_on: [23]
@@ -48,11 +48,11 @@ whether AI or fallback was used.
 
 ## Acceptance criteria
 
-- [ ] Returns model-based `minutes` + `confidence` when the model is available
-- [ ] Falls back to the window-aware naive estimate with `method: "fallback"` when model is down
-- [ ] `eta` is populated in the status response
-- [ ] Live features assembled correctly (people_ahead-in-group, service avg, active_windows, office, hour, day)
-- [ ] Feature tests cover model-path and fallback-path
+- [x] Returns model-based `minutes` + `confidence` when the model is available
+- [x] Falls back to the window-aware naive estimate with `method: "fallback"` when model is down
+- [x] `eta` is populated in the status response
+- [x] Live features assembled correctly (people_ahead-in-group, service avg, active_windows, office, hour, day)
+- [x] Feature tests cover model-path and fallback-path
 
 ## Verification
 

@@ -1,7 +1,7 @@
 ---
 id: 013
 title: location/update endpoint + 15m eligibility (POST /api/location/update)
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 3 / §8"
 depends_on: [8, 12]

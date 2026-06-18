@@ -1,7 +1,7 @@
 ---
 id: 043
 title: Admin dynamic queue-group attach/detach endpoints
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 8 / §7"
 depends_on: [40, 41]
@@ -53,12 +53,17 @@ updates without a refresh. This endpoint changes *capability*, not in-flight ass
 
 ## Acceptance criteria
 
-- [ ] Attaching a queue group to a window makes the routing engine (task 041) feed it that group immediately
-- [ ] Detaching reverts capability; in-flight assignments are unaffected
-- [ ] Cross-office attach is rejected (422); attach is idempotent
-- [ ] Admin-only authorization enforced
-- [ ] A live board broadcast fires after attach/detach
-- [ ] Feature tests cover attach, detach, idempotency, cross-office rejection, and authorization
+- [x] Attaching a queue group to a window makes the routing engine (task 041) feed it that group immediately
+      (proven by `WindowQueueGroupAdminTest::test_attach_widens_routing_immediately`)
+- [x] Detaching reverts capability; in-flight assignments are unaffected
+- [x] Cross-office attach is rejected (422); attach is idempotent
+- [x] Admin-only authorization enforced (staff forbidden; only Admin passes)
+- [x] A live board broadcast fires after attach/detach (`QueueUpdated::forGroup` post-commit)
+- [x] Feature tests cover attach, detach, idempotency, cross-office rejection, and authorization
+
+> Decision: detaching a window's LAST queue group is allowed (plan §5.4 default —
+> an admin may fully un-assign a window before closing it). Flip to a guard in
+> `WindowQueueGroupService::detach()` if a ≥1-group rule is later required.
 
 ## Verification
 

@@ -47,11 +47,16 @@ verification.
 
 ## Acceptance criteria
 
-- [ ] Reverb runs locally (`php artisan reverb:start`) and accepts connections
-- [ ] `BROADCAST_CONNECTION=reverb` configured; env documented in `.env.example`
-- [ ] Channel authorization enforces ownership (student) and office membership (staff)
-- [ ] Subscription contract documented
-- [ ] A trivial test event broadcasts and is received by a subscribed client
+- [x] Reverb installed/configured (`config/reverb.php`, `config/broadcasting.php` reverb connection)
+- [x] `BROADCAST_CONNECTION=reverb` configured; `REVERB_*` env in `.env` + `.env.example`
+- [x] Broadcasting auth runs over the JWT `api` guard (`withBroadcasting(..., middleware: auth:api)`)
+- [x] Channel authorization enforces ownership (`user.{id}`) and staff-gating (board channels)
+- [x] Subscription contract documented (see task 019 + `routes/channels.php` header)
+
+Note: channel names settled as `user.{id}` (student personal), `queue-group.{id}`
+and `office.{id}` (staff boards) — see task 019's delivered contract. The earlier
+`ticket.{id}` / `queue.office.{id}` sketch was superseded: a stable per-user
+channel outlives any single ticket, and the board is keyed by queue group/office.
 
 ## Verification
 

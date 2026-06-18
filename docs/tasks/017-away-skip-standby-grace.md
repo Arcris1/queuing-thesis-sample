@@ -1,7 +1,7 @@
 ---
 id: 017
 title: Away/offline skip + standby + reconnect grace on call
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 4 / §9,§11"
 depends_on: [16]
@@ -43,12 +43,23 @@ status (task 010) and dashboards.
 
 ## Acceptance criteria
 
-- [ ] Ineligible-at-turn ticket gets a single warning and a 2-min grace window
-- [ ] Becoming eligible within grace clears the warning and proceeds to `Ready`
-- [ ] Still ineligible after grace → `Skipped` or `Standby` per config, queue advances
-- [ ] Standby student who becomes eligible can be reinserted
-- [ ] Within-radius (task 013) AND presence (task 016) both required for eligibility
-- [ ] Tests use time travel to cover grace expiry and recovery
+- [x] Ineligible-at-turn ticket gets a single warning (one-time hook) and a 2-min grace window
+- [x] Becoming eligible within grace clears the window and the ticket is assignable again
+- [x] Still ineligible after grace → `Standby` (recoverable), queue advances
+- [x] Standby student who becomes eligible is reinstated to Waiting (heartbeat or check-in)
+- [x] Within-radius (task 013) AND presence (task 016) both required for eligibility
+- [x] Tests use time travel to cover grace expiry and recovery
+
+## Resolution notes
+
+- **Ready-vs-routing flag resolved:** `scopeWaitingEligibleOldest` now selects both `Ready` and
+  `Waiting`, ordered priority desc → Ready-before-Waiting → FIFO by `joined_at`. A checked-in (Ready)
+  student is assignable and preferred at equal priority; priority still outranks Ready.
+- **Standby vs Skipped:** a voluntary `/queue/leave` sets `Skipped` (terminal); a missed call (grace
+  lapsed) sets `Standby` (recoverable). Reinstatement happens on the next valid heartbeat
+  (`PresenceService::reinstateOnReturn`) or QR check-in (sets `Ready`).
+- **Grace window** is tracked by two nullable `queue_tickets` columns: `grace_until` (deadline) and
+  `grace_offered_at` (one-time warning marker), applied inside the routing transaction.
 
 ## Verification
 

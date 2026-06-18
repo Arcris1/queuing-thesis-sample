@@ -1,7 +1,7 @@
 ---
 id: 015
 title: heartbeat endpoint (POST /api/heartbeat)
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 4 / §9"
 depends_on: [8, 6]
@@ -44,11 +44,11 @@ rather than duplicating distance logic.
 
 ## Acceptance criteria
 
-- [ ] Each call records `last_seen = now()` for the user's active ticket
-- [ ] Returns derived `presence_status` from config thresholds
-- [ ] Battery/network/coords optional and validated
-- [ ] Endpoint is lightweight (no N+1, minimal writes)
-- [ ] Feature tests cover heartbeat update and status derivation
+- [x] Each call records `last_seen = now()` for the user's active ticket
+- [x] Returns derived `presence_status` from config thresholds
+- [x] Battery/network/coords optional and validated
+- [x] Endpoint is lightweight (no N+1, minimal writes)
+- [x] Feature tests cover heartbeat update and status derivation
 
 ## Verification
 

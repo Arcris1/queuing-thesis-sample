@@ -1,7 +1,7 @@
 ---
 id: 010
 title: Queue status endpoint (GET /api/queue/status)
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 1 / §7"
 depends_on: [8]
@@ -44,11 +44,11 @@ stable before task 024 lands.
 
 ## Acceptance criteria
 
-- [ ] Returns correct position and people_ahead computed within the ticket's queue group
-- [ ] No active ticket returns `data: null` with `200`
-- [ ] No N+1 (office/queue-group/service eager-loaded)
-- [ ] `eta` key present (nullable) for forward compatibility
-- [ ] Feature tests cover with-ticket and without-ticket
+- [x] Returns correct position and people_ahead computed within the ticket's queue group
+- [x] No active ticket returns `data: null` with `200`
+- [x] No N+1 (office/queue-group/service eager-loaded)
+- [x] `eta` key present (nullable) for forward compatibility
+- [x] Feature tests cover with-ticket and without-ticket
 
 ## Verification
 

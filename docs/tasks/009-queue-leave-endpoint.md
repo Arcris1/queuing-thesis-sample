@@ -1,7 +1,7 @@
 ---
 id: 009
 title: Queue leave endpoint (POST /api/queue/leave)
-status: Todo
+status: Done
 owner: laravel-backend-engineer
 plan_ref: "Phase 1 / §7"
 depends_on: [8]
@@ -41,11 +41,11 @@ change in a transaction. Do not hard-delete tickets (history/analytics need them
 
 ## Acceptance criteria
 
-- [ ] Leaving marks the ticket terminal and removes it from active position counts
-- [ ] No active ticket → clear error, no side effects
-- [ ] Tickets are never hard-deleted
-- [ ] Logic in service; thin controller; Resource response
-- [ ] Feature tests cover leave-success and leave-without-ticket
+- [x] Leaving marks the ticket terminal and removes it from active position counts
+- [x] No active ticket → clear error, no side effects
+- [x] Tickets are never hard-deleted
+- [x] Logic in service; thin controller; Resource response
+- [x] Feature tests cover leave-success and leave-without-ticket
 
 ## Verification
 

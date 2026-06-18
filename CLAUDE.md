@@ -2,19 +2,24 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project status: pre-implementation
+## Project status: in implementation
 
-This repository currently contains **no application source code** — only planning artifacts and
-agent configuration. There is no build system, dependency manifest, or test suite yet. Do not invent
-build/lint/test commands; the sections below describe what *will* exist once the stack is scaffolded.
-
-Current contents:
+The three stacks are scaffolded and the backend foundation is being built task by task (see
+`docs/tasks/README.md` for live status). Monorepo layout:
+- `backend/` — Laravel 13 API (PHP 8.4), Postgres, JWT. **This is where all business logic lives.**
+- `mobile/` — Flutter student app (Material 3, Riverpod, geolocator, mobile_scanner, dio).
+- `dashboard/` — Vue 3 + TS staff/admin dashboard (Tailwind v4, Pinia, Vue Router, axios).
 - `docs/plans/smart-queue-system-plan.md` — the authoritative spec for the whole system.
 - `docs/tasks/` — one task file per unit of work, derived from the plan (see "Task workflow").
 - `.claude/agents/` — three project agents encoding the chosen stack and conventions (see below).
 
 **The plan is the source of truth.** Read `docs/plans/smart-queue-system-plan.md` before any
 substantial work. If code and plan diverge, reconcile and update the plan in the same change.
+
+**Backend conventions are real and enforced** — the existing `app/DTOs`, `app/Services`,
+`app/Http/Requests`, `app/Http/Resources`, `app/Enums` are the patterns to match. Reuse the
+established `{ "data": ... }` JSON envelope. JWT is `php-open-source-saver/jwt-auth`; the default
+auth guard is `api` (driver `jwt`).
 
 ## What this project is
 
@@ -116,12 +121,17 @@ Rules:
   index in the same change.
 - When the plan changes, add/adjust task files to match — plan and tasks must stay consistent.
 
-## Expected commands (once scaffolded — not yet valid)
+## Commands (verified)
 
-These do not work until the respective projects are created. Add the real, verified commands here
-the moment each stack is scaffolded.
+Run from each stack's directory.
 
-- Backend (Laravel): `composer install`, `php artisan migrate --seed`, `php artisan serve`,
-  `php artisan test` (single test: `php artisan test --filter=TestName`), `php artisan reverb:start`,
-  `php artisan queue:work`, `php artisan schedule:work` (the presence/skip job runs on the scheduler).
-- Frontend (Vue): `npm install`, `npm run dev`, `npm run build`, `npm run test`, `npm run lint`.
+- **Backend** (`backend/`): `composer install`; `php artisan migrate:fresh --seed` (Postgres DB
+  `smart_queue`); `php artisan serve` (http://127.0.0.1:8000); `php artisan test` (single test:
+  `php artisan test --filter=TestName`); `php artisan route:list --path=api`. Realtime/queue/scheduler
+  (added in later phases): `php artisan reverb:start`, `php artisan queue:work`,
+  `php artisan schedule:work` (the presence/skip job runs on the scheduler).
+- **Dashboard** (`dashboard/`): `npm install`; `npm run dev`; `npm run build` (runs `vue-tsc`
+  type-check then Vite build). Dev server proxies `/api` → `http://127.0.0.1:8000`.
+- **Mobile** (`mobile/`): `flutter pub get`; `flutter run`; `flutter analyze`; `flutter test`.
+
+DB note: local Postgres must be running; `.env` uses `DB_CONNECTION=pgsql`, `DB_DATABASE=smart_queue`.

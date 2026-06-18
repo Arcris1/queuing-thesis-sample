@@ -45,12 +45,48 @@ returning DTO arrays. Queue broadcasts (`ShouldBroadcast`) unless latency demand
 
 ## Acceptance criteria
 
-- [ ] Position changes broadcast to the owning ticket channel
-- [ ] Being called broadcasts immediately (`ShouldBroadcastNow`) with a proceed message
-- [ ] Office board counts broadcast to the office channel on change
-- [ ] Payloads are DTO-shaped and match the documented contract
-- [ ] Events are NOT emitted on every heartbeat — only on real changes
-- [ ] Tests assert events dispatched with `Event::fake()`
+- [x] Being-called broadcasts to the owning student channel + boards
+- [x] Being called broadcasts immediately (`ShouldBroadcastNow`) with a proceed message
+- [x] Office/queue-group board counts broadcast on change (`QueueUpdated`)
+- [x] Payloads are DTO-shaped and match the documented contract
+- [x] Events are NOT emitted on every heartbeat — only on real changes
+- [x] Tests assert events dispatched with `Event::fake()` (no Reverb server needed)
+
+## Delivered — client subscription contract
+
+Auth: all channels are PrivateChannels. Clients POST their JWT Bearer token to
+`/broadcasting/auth` (registered with the `auth:api` guard in `bootstrap/app.php`)
+to subscribe. Mirror of `routes/channels.php`.
+
+Channels and events (event name = `broadcastAs()`):
+
+- `private-user.{userId}` — the student's personal channel (owner only).
+  - `ticket.called` — `App\Events\TicketCalled` (ShouldBroadcastNow).
+    Payload: `{ ticket: { id, ticket_number, status, student_id, called_at },
+    window: { id, name }, queue_group: { id, name, prefix },
+    office: { id, name }, message }`.
+
+- `private-queue-group.{queueGroupId}` — a group's live board (staff/admin only).
+  - `ticket.called` — same payload as above.
+  - `queue.updated` — `App\Events\QueueUpdated` (ShouldBroadcast).
+    Payload: `{ queue_group_id, office_id, now_serving, waiting_count }`.
+    Lightweight — clients refetch `GET /api/queue/current` / `/api/queue/status`
+    for full detail.
+  - `presence.changed` — `App\Events\PresenceChanged` (ShouldBroadcast).
+    Payload: `{ ticket_id, queue_group_id, office_id, presence, ticket_status }`.
+
+- `private-office.{officeId}` — an office-wide board (staff/admin only). Carries
+  `ticket.called`, `queue.updated`, `presence.changed` (same shapes).
+
+The PUBLIC "now serving" board has no socket — it polls `GET /api/queue/current`.
+
+Dispatch points (all after the DB::transaction commit):
+- `RoutingService::assignNext` → `TicketCalled` + proceed push + `QueueUpdated`.
+- `RoutingService::serve` → `QueueUpdated`.
+- `RoutingService::skip` → `QueueUpdated` (skipped) then `assignNext`'s call.
+- `RoutingService::recall` → re-`TicketCalled` + proceed push (no state change).
+- `QueueService::join` / `leave` → `QueueUpdated`.
+- `PresenceService::moveToStandby` / `reclaimAbandoned` → `PresenceChanged` + `QueueUpdated`.
 
 ## Verification
 

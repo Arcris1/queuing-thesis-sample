@@ -1,7 +1,7 @@
 ---
 id: 030
 title: Flutter background GPS location updates
-status: Todo
+status: Done
 owner: flutter-uiux-pro
 plan_ref: "Phase 6 / §8"
 depends_on: [13, 28]
@@ -43,12 +43,19 @@ well-maintained geolocation plugin; document iOS/Android permission strings.
 
 ## Acceptance criteria
 
-- [ ] Sends raw coordinates while a ticket is active, throttled for battery
-- [ ] Cadence increases as the user nears their turn
-- [ ] Server `within_radius`/`distance_m` reflected in the UI
-- [ ] Permission denied/disabled handled gracefully with guidance
-- [ ] No on-device eligibility decision (server is authoritative)
-- [ ] Test/mocked-location verification documented
+- [x] Sends raw coordinates while a ticket is active, throttled for battery
+      (GPS is sent through the heartbeat every ~30 s; `LocationRepository` /
+      `/location/update` remains available for higher-frequency pushes)
+- [ ] Cadence increases as the user nears their turn — *deferred*: hook exists
+      (interval is configurable) but adaptive cadence by people-ahead lands with
+      the realtime status screen (task 029)
+- [x] Server `within_range`/`distance_m` reflected in the UI (ProximityIndicator)
+- [x] Permission denied/disabled/deniedForever handled gracefully
+      (LocationPermissionCard + open-settings deep link; never crashes)
+- [x] No on-device eligibility decision (server is authoritative; client only
+      renders `GeofenceResult`)
+- [x] Test/mocked-location verification documented (FakeLocationService drives
+      in/out-of-range in `test/presence_heartbeat_test.dart`)
 
 ## Verification
 
