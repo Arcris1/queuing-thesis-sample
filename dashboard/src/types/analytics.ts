@@ -3,29 +3,28 @@
 
 export interface PeakHour {
   hour: number
-  count: number
+  served: number
 }
 
 export interface QueueGroupBreakdown {
-  id: number
+  queue_group_id: number
   name: string
-  prefix: string
+  served: number
   avg_service_minutes: number
-  count: number
 }
 
 export interface ServiceBreakdown {
-  id: number
+  service_id: number
   name: string
+  served: number
   avg_service_minutes: number
-  count: number
 }
 
 export interface WindowBreakdown {
-  id: number
+  window_id: number
   name: string
+  served: number
   avg_service_minutes: number
-  count: number
 }
 
 export interface WindowUtilization {

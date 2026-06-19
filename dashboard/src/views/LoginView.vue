@@ -182,6 +182,21 @@ async function handleSubmit() {
       <p class="mt-6 text-center text-xs text-slate-400">
         Restricted to authorized staff and administrators.
       </p>
+
+      <!-- Launch the public, no-login "Now Serving" wall display (opens in a new tab). -->
+      <div class="mt-4 text-center">
+        <RouterLink
+          :to="{ name: 'display-index' }"
+          target="_blank"
+          class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-500 transition hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="13" rx="2" />
+            <path stroke-linecap="round" d="M8 20h8M12 17v3" />
+          </svg>
+          <span>Open public queue display</span>
+        </RouterLink>
+      </div>
     </div>
   </main>
 </template>

@@ -71,6 +71,19 @@ async function handleLogout() {
       </div>
 
       <div class="flex items-center gap-3">
+        <!-- Launch the public "Now Serving" wall display in a new tab (for monitors). -->
+        <RouterLink
+          :to="{ name: 'display-index' }"
+          target="_blank"
+          class="hidden items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 active:bg-slate-100 sm:inline-flex"
+        >
+          <svg class="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="13" rx="2" />
+            <path stroke-linecap="round" d="M8 20h8M12 17v3" />
+          </svg>
+          <span>Public display</span>
+        </RouterLink>
+
         <div class="flex items-center gap-2.5">
           <span
             class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700"

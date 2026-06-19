@@ -216,11 +216,20 @@ final class QueueService
      */
     private function todaysQueue(Office $office): Queue
     {
-        /** @var Queue $queue */
-        $queue = Queue::query()->firstOrCreate(
+        Queue::query()->firstOrCreate(
             ['office_id' => $office->id, 'date' => today()],
             ['status' => QueueStatus::Open],
         );
+
+        // Lock the single daily-session row (a plain row-level FOR UPDATE, valid
+        // on Postgres and SQLite) so concurrent joins for this office/day are
+        // serialized and ticket numbering stays gap-free.
+        /** @var Queue $queue */
+        $queue = Queue::query()
+            ->where('office_id', $office->id)
+            ->where('date', today())
+            ->lockForUpdate()
+            ->firstOrFail();
 
         return $queue;
     }
@@ -232,10 +241,12 @@ final class QueueService
      */
     private function nextTicketNumber(QueueGroup $queueGroup): string
     {
+        // Plain COUNT (no FOR UPDATE): Postgres rejects `SELECT count(*) ... FOR
+        // UPDATE`. Serialization comes from the daily `queues` row locked in
+        // todaysQueue(), so concurrent joins for the same office can't collide.
         $issuedToday = QueueTicket::query()
             ->where('queue_group_id', $queueGroup->id)
             ->forToday()
-            ->lockForUpdate()
             ->count();
 
         $sequence = $issuedToday + 1;

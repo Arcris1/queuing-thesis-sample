@@ -52,23 +52,9 @@ echo "[entrypoint] Postgres is up."
 echo "[entrypoint] Migrating + seeding ..."
 php artisan migrate:fresh --seed --force
 
-# Known demo login accounts (idempotent). Password for all three: "password".
+# Known demo login accounts (idempotent seeder). Password for all three: "password".
 echo "[entrypoint] Creating demo accounts ..."
-php artisan tinker --execute='
-    use App\Models\User; use Illuminate\Support\Facades\Hash;
-    $demo = [
-        ["Admin User",   "admin@smartqueue.test",   "admin",   null],
-        ["Staff User",   "staff@smartqueue.test",   "staff",   null],
-        ["Student User", "student@smartqueue.test", "student", "2026-0001"],
-    ];
-    foreach ($demo as [$name, $email, $role, $sn]) {
-        User::updateOrCreate(["email" => $email], [
-            "name" => $name, "role" => $role, "student_no" => $sn,
-            "password" => Hash::make("password"),
-        ]);
-    }
-    echo "demo accounts ready\n";
-'
+php artisan db:seed --class=DemoUserSeeder --force
 
 # Train the AI wait-time model so /api/queue/estimate returns model-based ETAs.
 echo "[entrypoint] Seeding service history + training the wait-time model ..."

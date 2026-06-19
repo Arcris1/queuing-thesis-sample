@@ -44,24 +44,24 @@ const fmt = (n: number) => (Number.isInteger(n) ? n.toString() : n.toFixed(1))
 
 const serviceBars = computed<BarItem[]>(() =>
   (summary.value?.by_service ?? []).map((s) => ({
-    key: s.id,
+    key: s.service_id,
     label: s.name,
-    value: s.count,
-    display: `${s.count} · ${fmt(s.avg_service_minutes)} min avg`,
+    value: s.served,
+    display: `${s.served} served · ${fmt(s.avg_service_minutes)} min avg`,
   })),
 )
 
 const groupBars = computed<BarItem[]>(() =>
   (summary.value?.by_queue_group ?? []).map((g) => ({
-    key: g.id,
-    label: `${g.prefix} · ${g.name}`,
-    value: g.count,
-    display: `${g.count} · ${fmt(g.avg_service_minutes)} min avg`,
+    key: g.queue_group_id,
+    label: g.name,
+    value: g.served,
+    display: `${g.served} served · ${fmt(g.avg_service_minutes)} min avg`,
   })),
 )
 
 const utilizationBars = computed<BarItem[]>(() => {
-  const byWindowName = new Map((summary.value?.by_window ?? []).map((w) => [w.id, w.name]))
+  const byWindowName = new Map((summary.value?.by_window ?? []).map((w) => [w.window_id, w.name]))
   return (summary.value?.window_utilization ?? []).map((u) => ({
     key: u.window_id,
     label: u.window_name ?? byWindowName.get(u.window_id) ?? `Window ${u.window_id}`,

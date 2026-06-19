@@ -37,7 +37,7 @@ const chartData = computed<ChartData<'bar'>>(() => ({
   datasets: [
     {
       label: 'Tickets served',
-      data: sorted.value.map((p) => p.count),
+      data: sorted.value.map((p) => p.served),
       backgroundColor: '#2563eb',
       hoverBackgroundColor: '#1d4ed8',
       borderRadius: 6,
@@ -96,7 +96,7 @@ const hasData = computed(() => sorted.value.length > 0)
       <tbody>
         <tr v-for="p in sorted" :key="p.hour">
           <th scope="row">{{ hourLabel(p.hour) }}</th>
-          <td>{{ p.count }}</td>
+          <td>{{ p.served }}</td>
         </tr>
       </tbody>
     </table>

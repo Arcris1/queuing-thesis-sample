@@ -84,18 +84,14 @@ export type WindowStatus = 'available' | 'busy' | 'closed' | 'paused'
 export interface AssignmentStudent {
   id: number
   name: string
-  student_no: string | null
+  student_no?: string | null
 }
 
-export interface CurrentAssignmentTicket {
-  id: number
-  ticket_number: string
-  service: TicketServiceRef
-  student: AssignmentStudent
-}
-
+// Flat shape returned by the live board's window.current_assignment.
 export interface CurrentAssignment {
-  ticket: CurrentAssignmentTicket
+  ticket_id: number
+  ticket_number: string
+  student: AssignmentStudent | null
   since: string
 }
 

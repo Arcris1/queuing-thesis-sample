@@ -54,9 +54,8 @@ const anyPending = computed(
 async function onCallNext() {
   try {
     const result = await store.callNext(props.window.id)
-    const ticket = result && 'ticket' in result ? result.ticket : null
-    if (ticket) {
-      toasts.success(`Called ${ticket.ticket_number} to ${props.window.name}.`)
+    if (result?.ticket_number) {
+      toasts.success(`Called ${result.ticket_number} to ${props.window.name}.`)
     } else {
       toasts.info('No eligible student is waiting right now.')
     }
@@ -156,13 +155,12 @@ function messageOf(err: unknown): string {
         </p>
       </div>
       <p class="mt-1 text-lg font-bold text-slate-900 tabular-nums">
-        {{ assignment.ticket.ticket_number }}
+        {{ assignment.ticket_number }}
       </p>
-      <p class="text-sm text-slate-600">{{ assignment.ticket.service?.name }}</p>
       <p class="mt-0.5 text-xs text-slate-500">
-        {{ assignment.ticket.student?.name }}
-        <span v-if="assignment.ticket.student?.student_no" class="text-slate-400">
-          · {{ assignment.ticket.student.student_no }}
+        {{ assignment.student?.name }}
+        <span v-if="assignment.student?.student_no" class="text-slate-400">
+          · {{ assignment.student.student_no }}
         </span>
       </p>
     </div>
@@ -286,7 +284,7 @@ function messageOf(err: unknown): string {
       title="Skip this ticket?"
       :message="
         assignment
-          ? `${assignment.ticket.ticket_number} will be skipped and moved out of the active slot. This cannot be undone.`
+          ? `${assignment.ticket_number} will be skipped and moved out of the active slot. This cannot be undone.`
           : 'This ticket will be skipped.'
       "
       confirm-label="Skip ticket"

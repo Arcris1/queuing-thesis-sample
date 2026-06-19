@@ -3,13 +3,7 @@ import { computed, ref } from 'vue'
 import { isAxiosError } from 'axios'
 import api from '@/lib/api'
 import { createRealtimeDriver, type RealtimeDriver } from '@/lib/realtime'
-import type {
-  CurrentAssignment,
-  LiveBoard,
-  Office,
-  QueueGroup,
-  QueueWindow,
-} from '@/types/queue'
+import type { LiveBoard, Office, QueueGroup, QueueWindow } from '@/types/queue'
 
 /**
  * Queue board store — owns the live snapshot for one selected office and keeps it
@@ -148,10 +142,10 @@ export const useQueueBoardStore = defineStore('queueBoard', () => {
   async function windowAction(
     windowId: number,
     action: WindowAction,
-  ): Promise<CurrentAssignment | { ticket: null } | null> {
+  ): Promise<{ ticket_number: string } | null> {
     setActionPending(windowId, action, true)
     try {
-      const { data } = await api.post<{ data: CurrentAssignment | { ticket: null } | null }>(
+      const { data } = await api.post<{ data: { ticket_number: string } | null }>(
         `/windows/${windowId}/${action}`,
       )
       await fetchBoard(true)

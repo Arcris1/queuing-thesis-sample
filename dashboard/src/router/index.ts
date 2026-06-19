@@ -31,6 +31,21 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/AnalyticsView.vue'),
     meta: { requiresAuth: true },
   },
+  // --- Public "Now Serving" wall displays (UNAUTHENTICATED kiosks) ---
+  // Deliberately no `meta.requiresAuth` / `meta.guestOnly`: the guard below only
+  // acts on those flags, so these routes fall through to `return true` and are
+  // never redirected to /login nor bounced by the staff role gate. A kiosk has
+  // no login; the underlying GET /api/queue/current is a public endpoint.
+  {
+    path: '/display',
+    name: 'display-index',
+    component: () => import('@/views/DisplayIndexView.vue'),
+  },
+  {
+    path: '/display/:officeId',
+    name: 'display-office',
+    component: () => import('@/views/QueueDisplayView.vue'),
+  },
 ]
 
 export const router = createRouter({

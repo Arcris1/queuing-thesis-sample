@@ -28,6 +28,12 @@ class TicketStatusController extends Notifier<TicketStatusState> {
   StreamSubscription<RealtimeEvent>? _sub;
   bool _started = false;
 
+  /// The ticket id currently being tracked. Re-entering [start] with a NEW
+  /// ticket must fully restart the (shared, long-lived) transport — otherwise a
+  /// second ticket, after a prior one cleared and stopped the client, never
+  /// polls and the screen stays frozen on the join-seed.
+  int? _trackedId;
+
   /// Captured once on [start] so [build]'s onDispose can stop it without reading
   /// a provider during the dispose life-cycle (which Riverpod forbids).
   RealtimeClient? _client;
@@ -46,12 +52,21 @@ class TicketStatusController extends Notifier<TicketStatusState> {
   /// Begins live tracking for [initial] (the ticket handed off from join /
   /// confirmation, or recovered via `/queue/status`). Idempotent.
   void start(QueueTicket initial) {
-    if (_started) {
-      // Already streaming — just refresh the seed in case it changed.
+    // Same ticket already tracked → just refresh the seed and make sure the
+    // shared client is still polling (it may have been stopped by a prior clear).
+    if (_started && _trackedId == initial.id) {
       state = state.copyWith(ticket: initial, phase: StatusPhase.active);
+      _client?.start(initial.id);
       return;
     }
+
+    // First run, or a NEW ticket → (re)initialize the stream + transport from a
+    // clean slate.
+    _sub?.cancel();
+    _client?.stop();
+
     _started = true;
+    _trackedId = initial.id;
 
     final calling = initial.lifecycle == TicketStatus.called;
     state = TicketStatusState(
@@ -124,6 +139,8 @@ class TicketStatusController extends Notifier<TicketStatusState> {
         }
         _clearActiveTicket();
         _client?.stop();
+        _started = false;
+        _trackedId = null;
     }
   }
 
@@ -146,6 +163,8 @@ class TicketStatusController extends Notifier<TicketStatusState> {
     }
     _client?.stop();
     _clearActiveTicket();
+    _started = false;
+    _trackedId = null;
     state = const TicketStatusState(phase: StatusPhase.left);
   }
 
